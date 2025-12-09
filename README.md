@@ -1,3 +1,3 @@
 # FilteringReleves
 
-R codes for resampling vegetation plots based on their distance and compositional similarity
+R codes for resampling vegetation plots based on their geographical distance and compositional similarity
