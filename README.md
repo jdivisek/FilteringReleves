@@ -6,7 +6,7 @@ The plot removal process is iterative: the function first identifies the most si
 
 The function is built on the highly optimized `data.table` package and enables processing of large datasets (thousands and lower hundreds of thousands of plots) even on standard hardware.
 
-![](images/clipboard-1370335396.png){width="164"}
+![](images/data.table_logo.png)
 
 ## Data Requirements
 
@@ -36,9 +36,9 @@ The function requires two input data objects in `data.table` format.
 
     -   **Required columns:**
 
-        -   `PlotObservationID` : The plot identifier, which corresponds to the IDs in `coord`.
+        -   `PlotObservationID`: The plot identifier, which corresponds to the IDs in `coord`.
 
-        -   `Taxon_name` : The name of the recorded taxon (species).
+        -   `Taxon_name`: The name of the recorded taxon (species).
 
         -   `cover`: The species cover value (usually in %). Must be of type `numeric`.
 
@@ -112,6 +112,18 @@ The function operates in the following steps:
 
 ## Performance notes
 
-The function was tested with a dataset containing 468,341 vegetation plots from the European Vegetation Archive. On an older PC with 8 GB RAM and Intel Core i5-9400F 2.8 GHz processor, resampling took 20 hours and 53 minutes. However, the actual performance of the function critically depends on the `dist.threshold` value. The larger the value, the bigger the geographically contiguous groups of plots must be processed, and larger distances are also not ecologically very meaningful. It is therefore recommended to set the `dist.threshold` value no higher than 5,000 m (with `dist.threshold = 1000`, the largest group of plots had more than 29,000 plots). Although the `dnearneigh` function, which is used to identify neighboring plots, can handle geographical coordinates in degrees, it is also highly recommended to provide coordinates in a projected coordinate system such as ETRS89. In this case, the function uses Euclidean distance, instead of Great Circle distance, which speeds up identification of neighboring plots.
+The function can process very large datasets (lower hundreds of thousands of plots)
+but the actual performance of the function critically depends on parameters
+set:
 
-The function was also tested with a smaller dataset of ca. 114,000 plots from the Czech Vegetation Database. With `dist.threshold = 1000`, this number of plots was processed in 8 minutes on a laptop with 32 GB RAM and Intel Core i7-11850H 2.5 GHz processor. Although faster implementations of this filtering procedure in R are certainly possible, they require calculation of pairwise similarity matrices, which becomes very memory-demanding and inefficient with large datasets.
+-   `dist.threshold` value is the most important. The larger the value, the larger the geographically contiguous groups of plots are processed. For example, when setting `dist.threshold = 1000` for grassland vegetation plots from the European Vegetation Archive, the largest group contained more than 29,000 plots. Depending on the actual size of the dataset, it is therefore recommended to set the `dist.threshold` value no higher than 5,000 m. For smaller datasets, large distances can be set, but they are not ecologically very meaningful. For large datasets, high distance values can cause memory issues.
+
+-   `sim.threshold` value is another important parameter that influences the performance of the function, but it is not as critical as `dist.threshold`. Setting a very low similarity value will result in fewer preserved plots, and vice versa.
+
+-   `longlat`. Although the `dnearneigh` function, which is used to identify neighboring plots, can handle geographical coordinates in degrees, it is highly recommended to provide coordinates in a projected coordinate system such as ETRS89. In this case, the function uses Euclidean distance instead of Great Circle distance, which speeds up the identification of neighboring plots.
+
+The function was tested with a dataset containing 468,341 grassland vegetation plots from the European Vegetation Archive using the following settings: `longlat = FALSE`, `dist.threshold = 1000`, `sim.threshold = 0.8`, `sim.method = "simpson"`, `remove = "random"`, and `strata = NULL`. On an older PC with 8 GB RAM and an Intel Core i5-9400F 2.8 GHz processor, resampling took 20 hours and 53 minutes without any memory issues. Therefore, you should be patient😉. The resampling removed 30.9% of plots (144,860 out of 468,341).
+
+The function was also tested with a smaller dataset of ca. 114,000 plots from the Czech Vegetation Database using the following settings: `longlat = FALSE`, `dist.threshold = 1000`, `sim.threshold = 0.5`, `sim.method = "simpson"`, `remove = "random"`, and `strata = NULL`. On a laptop with 32 GB RAM and an Intel Core i7-11850H 2.5 GHz processor, the resampling procedure took 8 minutes.
+
+Although faster implementations of this resampling procedure in R are certainly possible, especially for small datasets, they require calculating pairwise similarity matrices, which becomes very memory-demanding and inefficient with large datasets.
