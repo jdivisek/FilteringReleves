@@ -108,12 +108,15 @@ The function operates in the following steps:
 
     -   The script then iterates through this sorted list, starting with the most similar pair. For the first pair in the list, it decides which plot to remove based on the `remove` rule and adds it to a "blacklist". Subsequently, it removes ALL pairs from the list that contained this just-removed plot. The process is repeated on the reduced list until no conflicting pairs remain.
 
+        ![](images/resampling_example.png){width="530"}
+
+        The figure above shows resampling within a geographically contiguous group of 48 vegetation plots containing 265 plant species. With `dist.threshold = 1000`, the Simpson similarity was calculated for all 306 pairs of neighboring plots (gray lines). Of these, 55 pairs exceeded `sim.threshold = 0.5`. Plot similarity above this threshold is indicated by viridis line color – the darker the color, the higher the similarity. With `remove = "less diverse"`, the plot with lower species richness was removed from each pair that exceeds both `dist.threshold` and `sim.threshold`. Species richness of each plot is indicated by magma colors – the darker the color, the higher the species richness. The resmapling resulted in the removal of 25 plots (circles), while 23 species-richer plots (squares) were preserved.
+
 6.  **Result:** The blacklists of removed plots from all groups are combined. Based on this final blacklist, the original `coord` data.table is filtered, and the thinned and cleaned `coord.filtered` is returned.
 
 ## Performance notes
 
-The function can process very large datasets (lower hundreds of thousands of plots)
-but its actual performance critically depends on parameters set:
+The function can process very large datasets (lower hundreds of thousands of plots) but its actual performance critically depends on parameters set:
 
 -   `dist.threshold` value is the most important. The larger the value, the larger the geographically contiguous groups of plots are processed. For example, when setting `dist.threshold = 1000` for grassland vegetation plots from the European Vegetation Archive, the largest group contained more than 29,000 plots! Depending on the actual size of the dataset, it is therefore recommended to set the `dist.threshold` value no higher than 5,000 m. For smaller datasets, large distances can be set, but they are not ecologically very meaningful. For large datasets, high distance values increase processing time and can cause memory issues.
 
