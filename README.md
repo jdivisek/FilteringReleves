@@ -108,7 +108,7 @@ The function operates in the following steps:
 
     -   The script then iterates through this sorted list, starting with the most similar pair. For the first pair in the list, it decides which plot to remove based on the `remove` rule and adds it to a "blacklist". Subsequently, it removes ALL pairs from the list that contained this just-removed plot. The process is repeated on the reduced list until no conflicting pairs remain.
 
-        ![](images/resampling_example.png){width="436"}
+        ![](images/resampling_example.png)
 
         The figure above shows resampling within a geographically contiguous group of 48 vegetation plots containing 265 plant species. With `dist.threshold = 1000`, the Simpson similarity was calculated for all 306 pairs of neighboring plots (gray lines). Of these, 55 pairs exceeded `sim.threshold = 0.5`. Plot similarity above this threshold is indicated by viridis line color – the darker the color, the higher the similarity. With `remove = "less diverse"`, the plot with lower species richness was removed from each pair that exceeds both `dist.threshold` and `sim.threshold`. Species richness of each plot is indicated by magma colors – the darker the color, the higher the species richness. The resmapling resulted in the removal of 25 plots (circles), while 23 species-richer plots (squares) were preserved.
 
