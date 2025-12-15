@@ -108,7 +108,7 @@ The function operates in the following steps:
 
     -   The script then iterates through this sorted list, starting with the most similar pair. For the first pair in the list, it decides which plot to remove based on the `remove` rule and adds it to a "blacklist". Subsequently, it removes ALL pairs from the list that contained this just-removed plot. The process is repeated on the reduced list until no conflicting pairs remain.
 
-        ![](images/resampling_example.png){width="528"}
+        ![](images/resampling_example.png){width="436"}
 
         The figure above shows resampling within a geographically contiguous group of 48 vegetation plots containing 265 plant species. With `dist.threshold = 1000`, the Simpson similarity was calculated for all 306 pairs of neighboring plots (gray lines). Of these, 55 pairs exceeded `sim.threshold = 0.5`. Plot similarity above this threshold is indicated by viridis line color – the darker the color, the higher the similarity. With `remove = "less diverse"`, the plot with lower species richness was removed from each pair that exceeds both `dist.threshold` and `sim.threshold`. Species richness of each plot is indicated by magma colors – the darker the color, the higher the species richness. The resmapling resulted in the removal of 25 plots (circles), while 23 species-richer plots (squares) were preserved.
 
@@ -126,6 +126,6 @@ The function can process very large datasets (lower hundreds of thousands of plo
 
 The function was tested with a dataset containing 468,341 grassland vegetation plots from the European Vegetation Archive using the following settings: `longlat = FALSE`, `dist.threshold = 1000`, `sim.threshold = 0.8`, `sim.method = "simpson"`, `remove = "random"`, and `strata = NULL`. On an older PC with 8 GB RAM and an Intel Core i5-9400F 2.8 GHz processor, resampling took 20 hours and 53 minutes without any memory issues. Therefore, you should be patient😉. The resampling removed 30.9% of plots (144,860 out of 468,341).
 
-The function was also tested with a smaller dataset of ca. 114,000 plots from the Czech Vegetation Database using the following settings: `longlat = FALSE`, `dist.threshold = 1000`, `sim.threshold = 0.5`, `sim.method = "simpson"`, `remove = "random"`, and `strata = NULL`. On a laptop with 32 GB RAM and an Intel Core i7-11850H 2.5 GHz processor, the resampling procedure took 8 minutes.
+The function was also tested with a smaller dataset of 114,854 plots from the Czech Vegetation Database using the following settings: `longlat = FALSE`, `dist.threshold = 1000`, `sim.threshold = 0.5`, `sim.method = "simpson"`, `remove = "random"`, and `strata = NULL`. On a laptop with 32 GB RAM and an Intel Core i7-11850H 2.5 GHz processor, the resampling procedure took 8 minutes.
 
 Although faster implementations of this resampling procedure in R are certainly possible, especially for small datasets, they require calculating pairwise similarity matrices, which becomes very memory-demanding and inefficient with large datasets.
