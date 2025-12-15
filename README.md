@@ -113,14 +113,13 @@ The function operates in the following steps:
 ## Performance notes
 
 The function can process very large datasets (lower hundreds of thousands of plots)
-but the actual performance of the function critically depends on parameters
-set:
+but its actual performance critically depends on parameters set:
 
--   `dist.threshold` value is the most important. The larger the value, the larger the geographically contiguous groups of plots are processed. For example, when setting `dist.threshold = 1000` for grassland vegetation plots from the European Vegetation Archive, the largest group contained more than 29,000 plots. Depending on the actual size of the dataset, it is therefore recommended to set the `dist.threshold` value no higher than 5,000 m. For smaller datasets, large distances can be set, but they are not ecologically very meaningful. For large datasets, high distance values can cause memory issues.
+-   `dist.threshold` value is the most important. The larger the value, the larger the geographically contiguous groups of plots are processed. For example, when setting `dist.threshold = 1000` for grassland vegetation plots from the European Vegetation Archive, the largest group contained more than 29,000 plots! Depending on the actual size of the dataset, it is therefore recommended to set the `dist.threshold` value no higher than 5,000 m. For smaller datasets, large distances can be set, but they are not ecologically very meaningful. For large datasets, high distance values increase processing time and can cause memory issues.
 
 -   `sim.threshold` value is another important parameter that influences the performance of the function, but it is not as critical as `dist.threshold`. Setting a very low similarity value will result in fewer preserved plots, and vice versa.
 
--   `longlat`. Although the `dnearneigh` function, which is used to identify neighboring plots, can handle geographical coordinates in degrees, it is highly recommended to provide coordinates in a projected coordinate system such as ETRS89. In this case, the function uses Euclidean distance instead of Great Circle distance, which speeds up the identification of neighboring plots.
+-   `longlat`. Although the `dnearneigh` function, which is used to identify neighboring plots, can handle geographical coordinates in degrees, it is highly recommended to provide coordinates in a projected coordinate system such as ETRS89 and set `longlat = FALSE`. In this case, the function uses Euclidean distance instead of Great Circle distance, which speeds up the identification of neighboring plots.
 
 The function was tested with a dataset containing 468,341 grassland vegetation plots from the European Vegetation Archive using the following settings: `longlat = FALSE`, `dist.threshold = 1000`, `sim.threshold = 0.8`, `sim.method = "simpson"`, `remove = "random"`, and `strata = NULL`. On an older PC with 8 GB RAM and an Intel Core i5-9400F 2.8 GHz processor, resampling took 20 hours and 53 minutes without any memory issues. Therefore, you should be patient😉. The resampling removed 30.9% of plots (144,860 out of 468,341).
 
