@@ -4,7 +4,7 @@ The `resample` function performs a thinning (resampling) of vegetation-plot data
 
 The plot removal process is iterative: the function first identifies the most similar pair of plots within the specified distance, removes one of them based on a selected rule, and repeats this process until no pairs that violate the specified distance and similarity thresholds remain in the dataset.
 
-The function is built on the highly optimized `data.table` package and enables processing of large datasets (thousands and lower hundreds of thousands of plots) even on standard hardware.
+The function is built on the highly optimized [`data.table`](https://github.com/Rdatatable/data.table) package and enables processing of large datasets (thousands and lower hundreds of thousands of plots) even on standard hardware.
 
 ![](images/data.table_logo.png)
 
