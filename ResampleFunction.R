@@ -45,9 +45,9 @@ resample <- function(coord, spec, longlat = FALSE, dist.threshold = 1000, sim.th
   if(remove == "more diverse"){
     coord <- coord[spec[, .(.N), by = .(PlotObservationID)], on = c("PlotObservationID")][order(-N)]}
   if(remove == "lower var.value"){
-    coord <- setorderv(coord, var.value, 1)}
+    coord <- setorderv(coord, var.value, 1, na.last=FALSE)}
   if(remove == "higher var.value"){
-    coord <- setorderv(coord, var.value, -1)}
+    coord <- setorderv(coord, var.value, -1, na.last=FALSE)}
   
   if (sim.method != "bray") { spec[, cover := 1] }
   

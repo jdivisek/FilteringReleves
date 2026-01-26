@@ -70,11 +70,11 @@ The function requires two input data objects in `data.table` format.
 
     -   `"more diverse"`: Removes the plot with the higher number of species. Ties are broken by `"random"` order.
 
-    -   `"lower var.value"`: Removes the plot with the lower value in the column defined by the `var.value` parameter.
+    -   `"lower var.value"`: Removes the plot with the lower value in the column defined by the `var.value` parameter. `NAs` are allowed and plots with `NA` are removed first.
 
-    -   `"higher var.value"`: Removes the plot with the higher value in the column defined by the `var.value` parameter.
+    -   `"higher var.value"`: Removes the plot with the higher value in the column defined by the `var.value` parameter. `NAs` are allowed and plots with `NA` are removed first.
 
--   `var.value`: A character string. The name of a column in `coord` used for decision-making with the `"lower var.value"` and `"higher var.value"` methods.
+-   `var.value`: A character string. The name of a column in `coord` used for decision-making with the `"lower var.value"` and `"higher var.value"` methods. `NAs` are allowed in this variable and plots with `NA` are removed first.
 
 -   `strata`: A character string. The name of a column in `coord` that defines plot stratification. If provided, resampling is performed separately within each stratum (group).
 
