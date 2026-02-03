@@ -23,6 +23,10 @@ resample <- function(coord, spec, longlat = FALSE, dist.threshold = 1000, sim.th
   sim.method <- match.arg(sim.method); remove <- match.arg(remove)
   if(!is.data.table(coord)) stop("Error: 'coord' must be a data.table")
   if(!is.data.table(spec)) stop("Error: 'spec' must be a data.table")
+  
+  spec[, PlotObservationID := as.character(PlotObservationID)]
+  coord[, PlotObservationID := as.character(PlotObservationID)]
+  
   if(!("PlotObservationID" %chin% colnames(coord))) stop("Error: Column 'PlotObservationID' not found in 'coord'")
   if(ncol(coord) < 3) stop("Error: 'coord' must contain at least three columns (PlotObservationID, X, Y)")
   if(!all(sapply(coord[, 2:3], is.numeric))) stop("Error: Coordinates (X, Y or Lon, Lat) must be numeric")
@@ -36,9 +40,6 @@ resample <- function(coord, spec, longlat = FALSE, dist.threshold = 1000, sim.th
   if(!all(coord$PlotObservationID %chin% spec$PlotObservationID)) stop("Error: Some PlotObservationID in 'coord' not found in 'spec'")
   
   # --- 3. Prepare data ---
-  spec[, PlotObservationID := as.character(PlotObservationID)]
-  coord[, PlotObservationID := as.character(PlotObservationID)]
-  
   set.seed(seed) 
   coord <- coord[sample(1:nrow(coord)), ]
   
