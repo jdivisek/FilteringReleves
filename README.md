@@ -84,7 +84,7 @@ The function requires two input data objects in `data.table` format.
 
 The function operates in the following steps:
 
-1.  **Data Preparation and Validation:** Libraries (`data.table`, `spdep`, `Matrix`, `vegan` and `igraph`) are loaded, and a series of checks are performed to verify that the input data meets all requirements regarding format, type, and the absence of NA values.
+1.  **Data Preparation and Validation:** Libraries (`data.table`, `spdep`, `Matrix`, `vegan` and `igraph`) are loaded, and a series of checks are performed to verify that the input data meets all requirements regarding format, type, and the absence of `NA` values.
 
 2.  **Data Preparation and Sorting:** This key step ensures reproducibility and efficiency.
 
