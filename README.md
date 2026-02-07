@@ -18,7 +18,7 @@ The function requires two input data objects in `data.table` format.
 
     -   **Required columns:**
 
-        -   `PlotObservationID`: A unique identifier for each plot. It can be in any format (numeric, character).
+        -   `PlotObservationID`: A unique identifier for each plot. It can be numeric, integer or character.
 
         -   Second column: X-coordinate or Longitude. Must be of type numeric.
 
