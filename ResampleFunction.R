@@ -3,7 +3,7 @@
 ######################################################################
 
 #Author: Jan Divíšek
-#Version 2025-11-27
+#Version 2026-02-07
 
 resample <- function(coord, spec, longlat = FALSE, dist.threshold = 1000, sim.threshold = 0.8,
                      sim.method = c("simpson", "sorensen", "jaccard", "bray"),
@@ -23,9 +23,6 @@ resample <- function(coord, spec, longlat = FALSE, dist.threshold = 1000, sim.th
   sim.method <- match.arg(sim.method); remove <- match.arg(remove)
   if(!is.data.table(coord)) stop("Error: 'coord' must be a data.table")
   if(!is.data.table(spec)) stop("Error: 'spec' must be a data.table")
-  
-  # spec[, PlotObservationID := as.character(PlotObservationID)]
-  # coord[, PlotObservationID := as.character(PlotObservationID)]
   
   if(!("PlotObservationID" %chin% colnames(coord))) stop("Error: Column 'PlotObservationID' not found in 'coord'")
   if(ncol(coord) < 3) stop("Error: 'coord' must contain at least three columns (PlotObservationID, X coordinate, Y coordinate)")
@@ -54,32 +51,34 @@ resample <- function(coord, spec, longlat = FALSE, dist.threshold = 1000, sim.th
   
   if (sim.method != "bray") { spec[, cover := 1] }
   
-  ##set new ids based on ordered coord
-  spec[coord[, .(.I, PlotObservationID)], on = "PlotObservationID", id := I]
-  
   # --- 4. Indentification of neighbouring plots ---
   if (!is.null(strata)) {
-    cat("Searching for neighbouring plots within strata. Please wait...\n")
-    coord[, (strata) := as.character(get(strata))]
-    d <- vector("list", nrow(coord))
-    original_indices <- coord[,.I]
+    cat(paste("Searching for neighbouring plots within", uniqueN(coord[[strata]]), "strata:\n"))
+    coord[, (strata) := as.character(.SD[[1]]), .SDcols = strata]
     
-    for (s in unique(coord[[strata]])) {
-      stratum_mask <- coord[[strata]] == s
-      coord_sub <- coord[stratum_mask,]
-      d_sub <- dnearneigh(as.matrix(coord_sub[, 2:3]), d1 = 0, d2 = dist.threshold, bounds = c("GE", "LT"), longlat = longlat)
-      
-      sub_indices <- original_indices[stratum_mask]
-      for (i in 1:length(d_sub)) {
-        d[[sub_indices[i]]] <- as.integer(sub_indices[d_sub[[i]]])
-      }
+    coord <- setorderv(coord, strata, 1, na.last=FALSE)
+    
+    dnearneigh_strat <- function(x, d1, d2, row.names, longlat){
+      nb <- spdep::dnearneigh(x = x, d1 = d1, d2 = d2, row.names = row.names, 
+                              bounds = c("GE", "LT"), longlat = longlat)
+      lapply(nb, FUN = function(regions) {if(regions[1] > 0) {attr(nb, "region.id")[regions]} else {0}})
     }
-    class(d) <- "nb"
-    rm(original_indices, stratum_mask, coord_sub, d_sub, sub_indices)
+    
+    pb <- txtProgressBar(min = 0, max = uniqueN(coord[[strata]]), style = 3)
+    d <- coord[, {setTxtProgressBar(pb, .GRP);
+      data.table(NB = dnearneigh_strat(x = as.matrix(.SD), row.names = .I,
+                                       d1 = 0, d2 = dist.threshold, longlat = longlat))},
+      by = strata, .SDcols = 2:3]
+    close(pb)
+    
+    d <- d$NB
   } else { 
     cat("Searching for neighbouring plots. Please wait...\n")
-    d <- dnearneigh(as.matrix(coord[, 2:3]), d1 = 0, d2 = dist.threshold, bounds = c("GE", "LT"), longlat = longlat) 
+    d <- spdep::dnearneigh(as.matrix(coord[, 2:3]), d1 = 0, d2 = dist.threshold, bounds = c("GE", "LT"), longlat = longlat) 
   }
+  
+  ##set new ids based on ordered coord
+  spec[coord[, .(.I, PlotObservationID)], on = "PlotObservationID", id := I]
   
   # --- 5. Split plots to groups ---
   g <- igraph::components(igraph::graph_from_adj_list(d, mode = "all"))
